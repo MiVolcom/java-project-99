@@ -14,6 +14,7 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+application { mainClass.set("hexlet.code.AppApplication") }
 
 repositories {
     mavenCentral()
