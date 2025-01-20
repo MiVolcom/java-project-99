@@ -13,16 +13,13 @@ install:
 	./gradlew installDist
 
 run-dist:
-	./build/install/java-package/bin/java-package
+	./build/install/app/bin/app
 
 run:
 	./gradlew run
 
 test:
 	./gradlew test
-
-report:
-	./gradlew jacocoTestReport
 
 lint:
 	./gradlew checkstyleMain checkstyleTest
