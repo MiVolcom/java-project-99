@@ -7,3 +7,5 @@ spring:
   output:
     ansi:
       enabled: always
+  profiles:
+    default: dev
