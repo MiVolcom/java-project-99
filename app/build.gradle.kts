@@ -27,6 +27,10 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    testImplementation("org.springframework.security:spring-security-test")
+
     implementation("net.datafaker:datafaker:2.0.1")
     implementation("org.instancio:instancio-junit:3.3.0")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
