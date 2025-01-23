@@ -2,17 +2,14 @@ package hexlet.code.component;
 
 import hexlet.code.controller.api.UsersController;
 import hexlet.code.dto.UserCreateDTO;
-import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
-import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.IntStream;
 
 @Component
 @AllArgsConstructor
