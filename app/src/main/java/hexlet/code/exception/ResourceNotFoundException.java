@@ -1,4 +1,4 @@
-package hexlet.code.exeption;
+package hexlet.code.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

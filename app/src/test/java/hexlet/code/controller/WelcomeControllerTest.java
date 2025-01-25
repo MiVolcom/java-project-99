@@ -18,7 +18,7 @@ public class WelcomeControllerTest {
 
     @Test
     public void testWelcome() throws Exception {
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/welcome"))
                 .andExpect(status().isOk());
     }
 
