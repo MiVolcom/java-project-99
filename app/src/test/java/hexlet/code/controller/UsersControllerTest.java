@@ -2,12 +2,11 @@ package hexlet.code.controller;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -90,7 +89,8 @@ public class UsersControllerTest {
                 .getResponse();
         var body = response.getContentAsString();
 
-        List<UserDTO> userDTOS = om.readValue(body, new TypeReference<>() { });
+        List<UserDTO> userDTOS = om.readValue(body, new TypeReference<>() {
+        });
 
         var actual = userDTOS.stream().map(userMapper::map).toList();
         var expected = userRepository.findAll();
@@ -145,5 +145,16 @@ public class UsersControllerTest {
                 v -> v.node("username").isEqualTo(testUser.getEmail()),
                 v -> v.node("firstName").isEqualTo(testUser.getFirstName()),
                 v -> v.node("lastName").isEqualTo(testUser.getLastName()));
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+
+        var request = delete("/api/users/" + testUser.getId())
+                .with(token);
+        mockMvc.perform(request)
+                .andExpect(status().isNoContent());
+        assertFalse(userRepository.findById(testUser.getId()).isPresent());
+
     }
 }
