@@ -1,13 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./app/data/mydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=PostgreSQL;
+    url: jdbc:h2:file:./data/mydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=PostgreSQL;
     username: sa
     password: password
     driverClassName: org.h2.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialectue
   h2:
     console:
-      path: /h2-console
-      settings.trace: false
-      settings.web-allow-others: false
+      enable: true

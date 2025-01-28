@@ -19,7 +19,7 @@ spring:
     init:
       mode: always
   profiles:
-    default: development
+    default: dev
 
 logging:
   level:
