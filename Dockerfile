@@ -1,8 +1,8 @@
 FROM gradle:8.9-jdk21
 
-WORKDIR /app
+WORKDIR /
 
-COPY /app .
+COPY / .
 
 RUN ./gradlew installDist
 

@@ -1,6 +1,7 @@
 app/.gradle
 build/
 data
+node_modules
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
