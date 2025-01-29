@@ -1,5 +1,0 @@
-ext.pathMapper = [:]
-ext.pathMapper.put('//wsl\$/Ubuntu/home/olga/.jdks/corretto-21.0.5/bin/java', '/home/olga/.jdks/corretto-21.0.5/bin/java')
-ext.pathMapper.put('//wsl\$/Ubuntu/home/olga/java-project-99', '/home/olga/java-project-99')
-ext.pathMapper.put("<<target java executable path>>", '/home/olga/.jdks/corretto-21.0.5/bin/java')
-ext.mapPath = { path -> pathMapper.get(path) ?: path }
