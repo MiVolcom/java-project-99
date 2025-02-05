@@ -52,11 +52,9 @@ public class User implements UserDetails, BaseEntity {
     private String passwordDigest;
 
     @CreatedDate
-    @Column(name = "created_at")
     private LocalDate createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
     private LocalDate updatedAt;
 
 
