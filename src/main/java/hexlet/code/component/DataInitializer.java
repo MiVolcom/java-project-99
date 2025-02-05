@@ -2,7 +2,7 @@ package hexlet.code.component;
 
 import hexlet.code.controller.api.TaskStatusController;
 import hexlet.code.controller.api.UsersController;
-import hexlet.code.dto.UserCreateDTO;
+import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.taskStatus.TaskStatusCreateDTO;
 import hexlet.code.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;

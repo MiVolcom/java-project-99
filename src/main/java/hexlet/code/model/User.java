@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -27,10 +29,10 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @ToString(includeFieldNames = true, onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(of = "email")
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private long id;
 
     @ToString.Include
     @NotBlank
@@ -50,10 +52,18 @@ public class User implements UserDetails {
     private String passwordDigest;
 
     @CreatedDate
+    @Column(name = "created_at")
     private LocalDate createdAt;
 
     @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDate updatedAt;
+
+
+    @OneToMany(mappedBy = "assignee", cascade = CascadeType.MERGE)
+    private Set<Task> tasks = new HashSet<>();
+
+
 
     @Override
     public String getPassword() {

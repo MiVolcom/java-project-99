@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.dto.UserDTO;
+import hexlet.code.dto.user.UserDTO;
 import hexlet.code.mapper.UserMapper;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
