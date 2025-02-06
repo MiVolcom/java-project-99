@@ -30,6 +30,7 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /api-docs
+    pretty-print: true
 
 sentry:
   dsn: https://e000c563cebda29907a8117dbf3b179b@o4507123479805952.ingest.us.sentry.io/4507123483148288

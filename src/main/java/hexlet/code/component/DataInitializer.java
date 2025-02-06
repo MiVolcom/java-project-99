@@ -1,9 +1,11 @@
 package hexlet.code.component;
 
+import hexlet.code.controller.api.LabelController;
 import hexlet.code.controller.api.TaskStatusController;
 import hexlet.code.controller.api.UsersController;
-import hexlet.code.dto.user.UserCreateDTO;
+import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.taskStatus.TaskStatusCreateDTO;
+import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class DataInitializer implements ApplicationRunner {
     @Autowired
     private final TaskStatusController taskStatusController;
 
+    @Autowired
+    private final LabelController labelController;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         var admin = new UserCreateDTO();
@@ -47,5 +52,12 @@ public class DataInitializer implements ApplicationRunner {
                 new TaskStatusCreateDTO("Published", "published")
         );
         taskStatuses.forEach(taskStatusController::create);
+
+
+        List<LabelCreateDTO> labels = List.of(
+                new LabelCreateDTO("future"),
+                new LabelCreateDTO("bug")
+        );
+        labels.forEach(labelController::create);
     }
 }

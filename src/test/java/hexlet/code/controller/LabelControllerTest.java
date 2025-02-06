@@ -2,11 +2,14 @@ package hexlet.code.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.controller.Util.ModelGenerator;
-import hexlet.code.dto.task.TaskCreateDTO;
+import hexlet.code.dto.label.LabelCreateDTO;
+import hexlet.code.mapper.LabelMapper;
 import hexlet.code.mapper.TaskMapper;
+import hexlet.code.model.Label;
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.model.User;
+import hexlet.code.repository.LabelsRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -17,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -27,19 +30,16 @@ import java.nio.charset.StandardCharsets;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
-public class TaskControllerTest {
+public class LabelControllerTest {
     @Autowired
     private WebApplicationContext wac;
 
@@ -54,10 +54,11 @@ public class TaskControllerTest {
 
     private Task taskTest;
 
-    private JwtRequestPostProcessor token;
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
     private User testUser;
     private Task testTask;
     private TaskStatus testStatus;
+    private Label testLabel;
     @Autowired
     private TaskRepository taskRepository;
 
@@ -68,6 +69,11 @@ public class TaskControllerTest {
     @Autowired
     private TaskStatusRepository taskStatusRepository;
 
+    @Autowired
+    private LabelsRepository labelsRepository;
+
+    @Autowired
+    private LabelMapper labelMapper;
 
 
     @BeforeEach
@@ -81,9 +87,11 @@ public class TaskControllerTest {
         token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
         testTask = Instancio.of(modelGenerator.getTaskModel()).create();
         testStatus = Instancio.of(modelGenerator.getTaskStatusModel()).create();
+        testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
         taskRepository.save(testTask);
         userRepository.save(testUser);
         taskStatusRepository.save(testStatus);
+        labelsRepository.save(testLabel);
     }
 
     @AfterEach
@@ -91,13 +99,13 @@ public class TaskControllerTest {
         taskRepository.deleteAll();
         userRepository.deleteAll();
         taskStatusRepository.deleteAll();
-
+        labelsRepository.deleteAll();
     }
 
     @Test
     public void testShow() throws Exception {
 
-        var request = get("/api/tasks/{id}", testTask.getId()).with(token);
+        var request = get("/api/labels/{id}", testLabel.getId()).with(token);
 
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -107,7 +115,7 @@ public class TaskControllerTest {
     @Test
     public void testIndex() throws Exception {
 
-        var result = mockMvc.perform(get("/api/tasks").with(token))
+        var result = mockMvc.perform(get("/api/labels").with(token))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -118,16 +126,12 @@ public class TaskControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        var dto = new TaskCreateDTO();
-        Task task = Instancio.of(modelGenerator.getTaskModel()).create();
+        var dto = new LabelCreateDTO();
+        Label label = Instancio.of(modelGenerator.getLabelModel()).create();
 
-        dto.setTitle(task.getName());
-        dto.setContent(task.getDescription());
-        dto.setIndex(task.getIndex());
-        dto.setAssigneeId(testUser.getId());
-        dto.setStatus(testStatus.getSlug());
+        dto.setName(label.getName());
 
-        var request = post("/api/tasks")
+        var request = post("/api/labels")
                 .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(dto));
@@ -135,51 +139,39 @@ public class TaskControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isCreated());
 
-        var savedTask = taskRepository.findByName(dto.getTitle()).orElseThrow();
+        var savedLabel = labelsRepository.findByName(dto.getName()).orElseThrow();
 
-        assertThat(savedTask.getName()).isEqualTo(dto.getTitle());
-        assertThat(savedTask.getDescription()).isEqualTo(dto.getContent());
-        assertThat(savedTask.getIndex()).isEqualTo(dto.getIndex());
-//        assertThat(savedTask.getAssignee().getId()).isEqualTo(dto.getAssigneeId());
-//        Можно оставить, если в ТаскМаппер включен
-//         `@Mapping(target = "assignee", source = "assigneeId", qualifiedByName = "idToAssignee")`
-//        в шаге 7 сказано, что запрос должен включать в себя assigne_id,
-//        но в демонстрационном проекте нет поля ввода для assigne_id, соответственно Задача не создается
-//        т.к. assigne_id = 0
-//        (если да - оставляем, если нет - то как тогда обработать запрос в мапере???)
-        assertThat(savedTask.getTaskStatus().getSlug()).isEqualTo(dto.getStatus());
+        assertThat(savedLabel.getName()).isEqualTo(dto.getName());
     }
 
     @Test
     public void testUpdate() throws Exception {
 
-        var dto = taskMapper.map(testTask);
-        dto.setTitle("new Name");
-        dto.setContent("new Description");
+        var dto = labelMapper.map(testLabel);
+        dto.setName("new label");
 
-        var request = put("/api/tasks/{id}", testTask.getId())
+        var request = put("/api/labels/{id}", testLabel.getId())
                 .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(dto));
 
-        mockMvc.perform(request);
-//                .andExpect(status().isOk());
-//        Здесь почему-то говорит, что статус не ОК, хотя по факту в Постмане он 200
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
 
-        var task = taskRepository.findById(dto.getId()).orElseThrow();
+        var label = labelsRepository.findById(dto.getId()).orElseThrow();
 
-        assertThat(task.getName()).isEqualTo(dto.getTitle());
-        assertThat(task.getDescription()).isEqualTo(dto.getContent());
+        assertThat(label.getName()).isEqualTo(dto.getName());
     }
 
     @Test
     public void testDelete() throws Exception {
 
-        var request = delete("/api/tasks/{id}", testTask.getId()).with(token);
+        var request = delete("/api/labels/{id}", testLabel.getId()).with(token);
 
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());
 
-        assertFalse(taskRepository.findById(testTask.getId()).isPresent());
+        assertFalse(labelsRepository.findById(testLabel.getId()).isPresent());
     }
+
 }

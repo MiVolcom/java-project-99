@@ -1,7 +1,7 @@
 package hexlet.code.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,34 +18,21 @@ import java.util.Set;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @ToString(includeFieldNames = true, onlyExplicitlyIncluded = true)
-@Table(name = "tasks")
-public class Task implements BaseEntity {
+@Table(name = "labels")
+public class Label {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank
-    @Size(min = 1)
+    @Column(unique = true)
+    @NotNull
+    @Size(min = 3, max = 1000)
     private String name;
-
-    private Integer index;
-
-    private String description;
 
     @CreatedDate
     private LocalDate createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TaskStatus taskStatus;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User assignee;
-
-    @ManyToMany
-    @JoinTable(
-            name = "tasks_labels",
-            joinColumns = @JoinColumn(name = "tasks_id"),
-            inverseJoinColumns = @JoinColumn(name = "labels_id"))
-    private Set<Label> labels = new HashSet<>();
+    @ManyToMany(mappedBy = "labels", cascade = CascadeType.MERGE)
+    private Set<Task> tasks = new HashSet<>();
 
 }
