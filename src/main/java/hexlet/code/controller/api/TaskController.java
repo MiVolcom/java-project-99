@@ -2,12 +2,17 @@ package hexlet.code.controller.api;
 
 import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
+import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskMapper;
+import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
+import hexlet.code.specification.TaskSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,16 +29,22 @@ public class TaskController {
     @Autowired
     private TaskMapper taskMapper;
 
+    @Autowired
+    private TaskSpecification specBuilder;
 
-    @GetMapping("/tasks")
-    public ResponseEntity<List<TaskDTO>> index() {
-        var tasks = taskRepository.findAll();
-        var result = tasks.stream()
-                .map(taskMapper::map)
-                .toList();
-        return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(tasks.size()))
-                .body(result);
+
+    @GetMapping(path = "/tasks")
+    @ResponseStatus(value = HttpStatus.OK)
+    public ResponseEntity<Page<TaskDTO>> index(TaskParamsDTO taskParamsDTO, @RequestParam(defaultValue = "1") int page) {
+        var filter = specBuilder.build(taskParamsDTO);
+        Page<Task> tasks = taskRepository.findAll(filter, PageRequest.of(page - 1, 10));
+        Page<TaskDTO> pageTaskDTO = tasks.map(taskMapper::map);
+        List<TaskDTO> list = pageTaskDTO.getContent();
+
+        return ResponseEntity
+                .ok()
+                .header("X-Total-Count", String.valueOf(tasks.getTotalElements()))
+                .body(pageTaskDTO);
     }
 
     @PostMapping("/tasks")
