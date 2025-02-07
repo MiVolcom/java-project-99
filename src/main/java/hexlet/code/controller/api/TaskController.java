@@ -45,6 +45,7 @@ public class TaskController {
                 .ok()
                 .header("X-Total-Count", String.valueOf(tasks.getTotalElements()))
                 .body(pageTaskDTO);
+
     }
 
     @PostMapping("/tasks")
