@@ -35,7 +35,7 @@ public class TaskController {
 
     @GetMapping(path = "/tasks")
     @ResponseStatus(value = HttpStatus.OK)
-    public ResponseEntity<Page<TaskDTO>> index(TaskParamsDTO taskParamsDTO, @RequestParam(defaultValue = "1") int page) {
+    public ResponseEntity<List<TaskDTO>> index(TaskParamsDTO taskParamsDTO, @RequestParam(defaultValue = "1") int page) {
         var filter = specBuilder.build(taskParamsDTO);
         Page<Task> tasks = taskRepository.findAll(filter, PageRequest.of(page - 1, 10));
         Page<TaskDTO> pageTaskDTO = tasks.map(taskMapper::map);
@@ -44,7 +44,7 @@ public class TaskController {
         return ResponseEntity
                 .ok()
                 .header("X-Total-Count", String.valueOf(tasks.getTotalElements()))
-                .body(pageTaskDTO);
+                .body(list);
 
     }
 
