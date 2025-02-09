@@ -33,7 +33,7 @@ springdoc:
     pretty-print: true
 
 sentry:
-  dsn: https://e000c563cebda29907a8117dbf3b179b@o4507123479805952.ingest.us.sentry.io/4507123483148288
+  dsn: https://fd32e85ab59727ffc59ace24cdc2452a@o4508788377714688.ingest.de.sentry.io/4508788501774416
   traces-sample-rate: 1.0
 
 rsa:
