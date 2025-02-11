@@ -35,7 +35,7 @@ public class TaskController {
 
     @GetMapping(path = "/tasks")
     @ResponseStatus(value = HttpStatus.OK)
-    public ResponseEntity<List<TaskDTO>> index(TaskParamsDTO taskParamsDTO,
+    public ResponseEntity<List<TaskDTO>> index(@ModelAttribute TaskParamsDTO taskParamsDTO,
                                                @RequestParam(defaultValue = "1") int page) {
         var filter = specBuilder.build(taskParamsDTO);
         Page<Task> tasks = taskRepository.findAll(filter, PageRequest.of(page - 1, 10));
