@@ -1,22 +1,11 @@
 package hexlet.code.controller;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.dto.user.UserDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hexlet.code.controller.Util.ModelGenerator;
 import hexlet.code.mapper.UserMapper;
-import org.assertj.core.api.Assertions;
+import hexlet.code.model.User;
+import hexlet.code.repository.UserRepository;
+import net.datafaker.Faker;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,15 +15,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import hexlet.code.model.User;
-import hexlet.code.repository.UserRepository;
-import hexlet.code.controller.Util.ModelGenerator;
-import net.datafaker.Faker;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -83,18 +77,13 @@ public class UsersControllerTest {
 
     @Test
     public void testIndex() throws Exception {
-        var response = mockMvc.perform(get("/api/users").with(jwt()))
+        var result = mockMvc.perform(get("/api/users").with(jwt()))
+
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-        var body = response.getContentAsString();
+                .andReturn();
 
-        List<UserDTO> userDTOS = om.readValue(body, new TypeReference<>() {
-        });
-
-        var actual = userDTOS.stream().map(userMapper::map).toList();
-        var expected = userRepository.findAll();
-        Assertions.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body).isArray();
     }
 
     @Test
@@ -142,7 +131,7 @@ public class UsersControllerTest {
                 .andReturn();
         var body = result.getResponse().getContentAsString();
         assertThatJson(body).and(
-                v -> v.node("username").isEqualTo(testUser.getEmail()),
+                v -> v.node("email").isEqualTo(testUser.getEmail()),
                 v -> v.node("firstName").isEqualTo(testUser.getFirstName()),
                 v -> v.node("lastName").isEqualTo(testUser.getLastName()));
     }

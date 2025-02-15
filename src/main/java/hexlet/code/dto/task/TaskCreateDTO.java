@@ -16,5 +16,5 @@ public class TaskCreateDTO {
     private String status;
     @JsonProperty("assignee_id")
     private long assigneeId;
-    private Set<Long> labelIds = new HashSet<>();
+    private Set<Long> taskLabelIds = new HashSet<>();
 }

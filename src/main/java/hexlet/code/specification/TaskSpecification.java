@@ -11,7 +11,7 @@ public class TaskSpecification {
     public Specification<Task> build(TaskParamsDTO params) {
         return withAssigneeId(params.getAssigneeId())
                 .and(withTitleCont(params.getTitleCont())
-                        .and(withSlug(params.getSlug())
+                        .and(withSlug(params.getStatus())
                                 .and(withLabelId(params.getLabelId()))));
     }
 

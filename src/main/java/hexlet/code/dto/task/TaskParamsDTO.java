@@ -8,6 +8,6 @@ import lombok.Setter;
 public class TaskParamsDTO {
     private String titleCont;
     private long assigneeId;
-    private String slug;
+    private String status;
     private long labelId;
 }
