@@ -19,14 +19,6 @@ public abstract class UserMapper {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    @Mapping(target = "passwordDigest", source = "password")
-    public abstract User map(UserCreateDTO model);
-
-    public abstract UserDTO map(User model);
-
-    @Mapping(source = "password", target = "passwordDigest")
-    public abstract void update(UserUpdateDTO userUpdateDTO, @MappingTarget User user);
-
     @BeforeMapping
     public void encryptPassword(UserCreateDTO data) {
         var password = data.getPassword();
@@ -40,4 +32,12 @@ public abstract class UserMapper {
             user.setPasswordDigest(encoder.encode(password.get()));
         }
     }
+    @Mapping(target = "passwordDigest", source = "password")
+    public abstract User map(UserCreateDTO model);
+
+    public abstract UserDTO map(User model);
+
+    @Mapping(source = "password", target = "passwordDigest")
+    public abstract void update(UserUpdateDTO userUpdateDTO, @MappingTarget User user);
+
 }

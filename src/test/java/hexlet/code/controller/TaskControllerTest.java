@@ -140,13 +140,7 @@ public class TaskControllerTest {
         assertThat(savedTask.getName()).isEqualTo(dto.getTitle());
         assertThat(savedTask.getDescription()).isEqualTo(dto.getContent());
         assertThat(savedTask.getIndex()).isEqualTo(dto.getIndex());
-//        assertThat(savedTask.getAssignee().getId()).isEqualTo(dto.getAssigneeId());
-//        Можно оставить, если в ТаскМаппер включен
-//         `@Mapping(target = "assignee", source = "assigneeId", qualifiedByName = "idToAssignee")`
-//        в шаге 7 сказано, что запрос должен включать в себя assigne_id,
-//        но в демонстрационном проекте нет поля ввода для assigne_id, соответственно Задача не создается
-//        т.к. assigne_id = 0
-//        (если да - оставляем, если нет - то как тогда обработать запрос в мапере???)
+        assertThat(savedTask.getAssignee().getId()).isEqualTo(dto.getAssigneeId());
         assertThat(savedTask.getTaskStatus().getSlug()).isEqualTo(dto.getStatus());
     }
 
@@ -163,8 +157,6 @@ public class TaskControllerTest {
                 .content(om.writeValueAsString(dto));
 
         mockMvc.perform(request);
-//                .andExpect(status().isOk());
-//        Здесь почему-то говорит, что статус не ОК, хотя по факту в Постмане он 200
 
         var task = taskRepository.findById(dto.getId()).orElseThrow();
 

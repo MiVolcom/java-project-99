@@ -11,3 +11,7 @@
 Task Manager – система управления задачами. Она позволяет ставить задачи, назначать исполнителей и менять их статусы. Для работы с системой требуется регистрация и аутентификация.
 
 **Demo:** https://java-project-99-kntv.onrender.com
+
+```
+ login: hexlet@example.com
+ password: qwerty 
