@@ -4,6 +4,7 @@ package hexlet.code.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,6 +21,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @ToString(includeFieldNames = true, onlyExplicitlyIncluded = true)
 @Table(name = "task_statuses")
+@EqualsAndHashCode(of = {"name"})
 public class TaskStatus implements BaseEntity {
 
     @Id

@@ -15,3 +15,9 @@ Task Manager – система управления задачами. Она п
 ```
  login: hexlet@example.com
  password: qwerty 
+```
+Для установки и запуска программы выполните(For setup and run the programm, use) :
+```
+make install
+make run
+```

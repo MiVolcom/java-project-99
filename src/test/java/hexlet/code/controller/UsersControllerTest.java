@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.controller.Util.ModelGenerator;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
+import hexlet.code.repository.TaskRepository;
+import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import net.datafaker.Faker;
 import org.instancio.Instancio;
@@ -56,6 +58,12 @@ public class UsersControllerTest {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private TaskStatusRepository taskStatusRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
+
     private JwtRequestPostProcessor token;
 
     private User testUser;
@@ -68,11 +76,18 @@ public class UsersControllerTest {
                 .apply(springSecurity())
                 .build();
 
-        token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
-
         testUser = Instancio.of(modelGenerator.getUserModel())
                 .create();
+        token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+
         userRepository.save(testUser);
+    }
+
+    @BeforeEach
+    public void clean() {
+        taskRepository.deleteAll();
+        userRepository.deleteAll();
+        taskStatusRepository.deleteAll();
     }
 
     @Test
@@ -125,7 +140,7 @@ public class UsersControllerTest {
 
     @Test
     public void testShow() throws Exception {
-        var request = get("/api/users/" + testUser.getId()).with(jwt());
+        var request = get("/api/users/" + testUser.getId()).with(token);
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();

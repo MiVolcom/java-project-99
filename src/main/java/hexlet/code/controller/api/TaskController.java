@@ -9,25 +9,23 @@ import hexlet.code.mapper.TaskMapper;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.specification.TaskSpecification;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class TaskController {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
-    @Autowired
-    private TaskMapper taskMapper;
+    private final TaskMapper taskMapper;
 
-    @Autowired
-    private TaskSpecification specBuilder;
+    private final TaskSpecification specBuilder;
 
 
     @GetMapping(path = "/tasks")
@@ -55,7 +53,7 @@ public class TaskController {
 
     @PutMapping("/tasks/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TaskDTO update(@RequestBody TaskUpdateDTO data, @PathVariable Long id) {
+    public TaskDTO update(@Valid @RequestBody TaskUpdateDTO data, @PathVariable Long id) {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
         taskMapper.update(data, task);

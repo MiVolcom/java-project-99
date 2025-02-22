@@ -13,9 +13,11 @@ import hexlet.code.repository.LabelsRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Transactional
 public class LabelControllerTest {
     @Autowired
     private WebApplicationContext wac;
@@ -94,7 +95,7 @@ public class LabelControllerTest {
         labelsRepository.save(testLabel);
     }
 
-    @AfterEach
+    @BeforeEach
     public void clean() {
         taskRepository.deleteAll();
         userRepository.deleteAll();

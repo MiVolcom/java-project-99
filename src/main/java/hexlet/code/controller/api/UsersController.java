@@ -6,28 +6,25 @@ import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.repository.UserRepository;
+import hexlet.code.util.UserUtils;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class UsersController {
-    private static final String ONLY_OWNER_BY_ID_OR_ADMIN = """
-                @userRepository.findById(#id).get().getEmail() == authentication.getName()
-                 || authentication.getName() == 'hexlet@example.com'
-            """;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+    private final UserUtils userUtils;
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> index() {
@@ -50,10 +47,13 @@ public class UsersController {
 
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize(ONLY_OWNER_BY_ID_OR_ADMIN)
     public UserDTO update(@RequestBody UserUpdateDTO userData, @PathVariable Long id) {
         var user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        var authenticationUser = userUtils.getCurrentUser();
+        if (!authenticationUser.getEmail().equals(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         userMapper.update(userData, user);
         userRepository.save(user);
         var userDTO = userMapper.map(user);
@@ -70,10 +70,12 @@ public class UsersController {
 
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize(ONLY_OWNER_BY_ID_OR_ADMIN)
     public void delete(@PathVariable long id) {
         var user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
-        userRepository.delete(user);
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        var authenticationUser = userUtils.getCurrentUser();
+        if (authenticationUser.getEmail().equals(user.getEmail())) {
+            userRepository.deleteById(id);
+        }
     }
 }

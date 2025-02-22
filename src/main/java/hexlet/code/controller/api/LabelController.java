@@ -7,21 +7,20 @@ import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.LabelMapper;
 import hexlet.code.repository.LabelsRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class LabelController {
-    @Autowired
-    private LabelsRepository labelsRepository;
 
-    @Autowired
-    private LabelMapper labelMapper;
+    private final LabelsRepository labelsRepository;
+    private final LabelMapper labelMapper;
 
     @GetMapping("/labels")
     public ResponseEntity<List<LabelDTO>> index() {
@@ -44,7 +43,7 @@ public class LabelController {
 
     @PutMapping("/labels/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public LabelDTO update(@RequestBody LabelUpdateDTO data, @PathVariable Long id) {
+    public LabelDTO update(@Valid @RequestBody LabelUpdateDTO data, @PathVariable Long id) {
         var label = labelsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
         labelMapper.update(data, label);

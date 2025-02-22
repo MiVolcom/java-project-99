@@ -3,6 +3,7 @@ package hexlet.code.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,6 +20,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @ToString(includeFieldNames = true, onlyExplicitlyIncluded = true)
 @Table(name = "tasks")
+@EqualsAndHashCode(of = {"name"})
 public class Task implements BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,13 +37,13 @@ public class Task implements BaseEntity {
     @CreatedDate
     private LocalDate createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private TaskStatus taskStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private User assignee;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tasks_labels",
             joinColumns = @JoinColumn(name = "tasks_id"),
