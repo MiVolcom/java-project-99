@@ -12,14 +12,14 @@ import java.util.Set;
 @Getter
 @Setter
 public class TaskDTO {
-    private long id;
+    private Long id;
     private Integer index;
     private String title;
     private String content;
     private String status;
 
     @JsonProperty("assignee_id")
-    private long assigneeId;
+    private Long assigneeId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate createdAt;

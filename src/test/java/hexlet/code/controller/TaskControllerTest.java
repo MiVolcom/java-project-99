@@ -119,8 +119,6 @@ public class TaskControllerTest {
 
         dto.setTitle(task.getName());
         dto.setContent(task.getDescription());
-        dto.setIndex(task.getIndex());
-        dto.setAssigneeId(testUser.getId());
         dto.setStatus(testStatus.getSlug());
 
         var request = post("/api/tasks")

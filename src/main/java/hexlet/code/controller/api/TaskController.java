@@ -6,6 +6,7 @@ import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskMapper;
+import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.specification.TaskSpecification;
 import jakarta.validation.Valid;
@@ -32,11 +33,12 @@ public class TaskController {
     @ResponseStatus(value = HttpStatus.OK)
     public ResponseEntity<List<TaskDTO>> index(TaskParamsDTO taskParamsDTO) {
         var filter = specBuilder.build(taskParamsDTO);
-        List<TaskDTO> tasks = taskRepository.findAll(filter).stream()
+        List<Task> filteredTasks = taskRepository.findAll(filter);
+        List<TaskDTO> tasks = filteredTasks.stream()
                 .map(taskMapper::map)
                 .toList();
 
-        return ResponseEntity
+            return ResponseEntity
                 .ok()
                 .header("X-Total-Count", String.valueOf(tasks.size()))
                 .body(tasks);
