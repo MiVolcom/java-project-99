@@ -137,23 +137,23 @@ public class TaskControllerTest {
         assertThat(savedTask.getTaskStatus().getSlug()).isEqualTo(dto.getStatus());
     }
 
-//    @Test
-//    public void testUpdate() throws Exception {
-//        var dto = taskMapper.map(testTask);
-//        dto.setTitle("new Name");
-//        dto.setContent("new Description");
-//
-//        var request = put("/api/tasks/{id}", testTask.getId())
-//                .with(token)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(om.writeValueAsString(dto));
-//        mockMvc.perform(request);
-//
-//        var task = taskRepository.findById(dto.getId()).orElseThrow();
-//
-//        assertThat(task.getName()).isEqualTo(dto.getTitle());
-//        assertThat(task.getDescription()).isEqualTo(dto.getContent());
-//    }
+    @Test
+    public void testUpdate() throws Exception {
+        var dto = taskMapper.map(testTask);
+        dto.setTitle("new Name");
+        dto.setContent("new Description");
+
+        var request = put("/api/tasks/{id}", testTask.getId())
+                .with(token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(dto));
+        mockMvc.perform(request);
+
+        var task = taskRepository.findById(dto.getId()).orElseThrow();
+
+        assertThat(task.getName()).isEqualTo(dto.getTitle());
+        assertThat(task.getDescription()).isEqualTo(dto.getContent());
+    }
 
     @Test
     public void testDelete() throws Exception {
