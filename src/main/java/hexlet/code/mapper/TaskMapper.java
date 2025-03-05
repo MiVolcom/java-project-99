@@ -63,6 +63,9 @@ public abstract class TaskMapper {
     }
     @Named("idToAssignee")
     public User idToAssignee(Long assigneeId) {
+        if (assigneeId == null) {
+            return null;
+        }
         var assignee = userRepository.findById(assigneeId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + assigneeId + " not found"));
         return assignee;
