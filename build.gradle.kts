@@ -28,7 +28,6 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.4")
 
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -37,7 +36,6 @@ dependencies {
     implementation("net.datafaker:datafaker:2.0.1")
     implementation("org.instancio:instancio-junit:3.3.0")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
-    implementation("jakarta.validation:jakarta.validation-api:3.1.0")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     runtimeOnly("com.h2database:h2:2.2.224")
